@@ -6,105 +6,154 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class SignText implements Iterable<String> {
+public class SignText implements Iterable<String>
+{
 
-	private boolean enabled = true;
-	private String owner;
-	private boolean redstone = false;
-	private List<String> text;
-	private final Map<String, Long> timeouts = new HashMap<String, Long>();
 
-	public SignText(String owner, boolean redstone) {
+	private boolean					enabled		= true;
+	private final String			owner;
+	private boolean					redstone	= false;
+	private final List<String>		text;
+	private final Map<String, Long>	timeouts	= new HashMap<String, Long>();
+
+
+
+
+	public SignText(final String owner, final boolean redstone) {
 		this.owner = owner;
-		text = new ArrayList<String>();
+		this.text = new ArrayList<String>();
 		this.redstone = redstone;
 	}
 
-	public void addLine(String string) {
-		text.add(string);
+
+
+
+	public void addLine( final String string ) {
+		this.text.add( string );
 	}
 
-	public SignText clone(String owner) {
-		SignText cst = new SignText(owner, redstone);
-		for (String s : text) {
-			cst.getText().add(s);
-		}
+
+
+
+	public SignText clone( final String owner ) {
+		final SignText cst = new SignText( owner, this.redstone );
+		for ( final String s : this.text )
+			cst.getText().add( s );
 		return cst;
 	}
 
+
+
+
 	public int count() {
-		int size = text.size();
+		int size = this.text.size();
 		// Count from last to first, stop whenever a non-blank
 		// is found, or if the size hits 'zero'
-		while (size > 0 && getLine(size) == "")
+		while ( size > 0 && this.getLine( size ) == "" )
 			size--;
 		return size;
 	}
 
+
+
+
 	// Internal list is ZERO indexed, one indexed externally only
-	public String getLine(int index) {
-		return text.get(index - 1);
+	public String getLine( final int index ) {
+		return this.text.get( index - 1 );
 	}
 
+
+
+
 	public String getOwner() {
-		return owner;
+		return this.owner;
 	}
+
+
+
 
 	public List<String> getText() {
 		return this.text;
 	}
 
+
+
+
 	public Map<String, Long> getTimeouts() {
-		return timeouts;
+		return this.timeouts;
 	}
+
+
+
 
 	public boolean isEnabled() {
-		return enabled;
+		return this.enabled;
 	}
 
+
+
+
 	public boolean isRedstone() {
-		return redstone;
+		return this.redstone;
 	}
+
+
+
 
 	@Override
 	public Iterator<String> iterator() {
-		return text.iterator();
+		return this.text.iterator();
 	}
 
-	public void removeLine(int index) {
-		if (index >= 1 && index <= text.size()) {
-			text.remove(index - 1);
-		}
+
+
+
+	public void removeLine( final int index ) {
+		if ( index >= 1 && index <= this.text.size() )
+			this.text.remove( index - 1 );
 	}
 
-	public void setEnabled(boolean enabled) {
+
+
+
+	public void setEnabled( final boolean enabled ) {
 		this.enabled = enabled;
 	}
 
-	public void setLine(int index, String line) {
-		while (text.size() < index) {
-			text.add("");
-		}
-		text.set(index - 1, line);
+
+
+
+	public void setLine( final int index, final String line ) {
+		while ( this.text.size() < index )
+			this.text.add( "" );
+		this.text.set( index - 1, line );
 	}
 
-	public void setRedstone(boolean redstone) {
+
+
+
+	public void setRedstone( final boolean redstone ) {
 		this.redstone = redstone;
 	}
 
+
+
+
 	@Override
 	public String toString() {
-		String string = "";
+		final String string = "";
 
 		return string;
 	}
 
+
+
+
 	public void trim() {
 		int blank;
-		while ((blank = text.lastIndexOf("")) >= 0)
-			text.remove(blank);
-		for (String line : text) {
+		while ( ( blank = this.text.lastIndexOf( "" ) ) >= 0 )
+			this.text.remove( blank );
+		for ( final String line : this.text )
 			line.trim();
-		}
 	}
 }

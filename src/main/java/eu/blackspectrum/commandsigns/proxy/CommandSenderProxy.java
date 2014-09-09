@@ -14,110 +14,193 @@ import org.bukkit.plugin.Plugin;
  * CommandSender originator and recipient can be the same CommandSender Allows
  * sendMessage() methods to be intercepted if the silent flag is set
  */
-public class CommandSenderProxy implements CommandSender {
+public class CommandSenderProxy implements CommandSender
+{
 
-	private CommandSender originator;
-	private CommandSender recipient;
-	boolean silent;
 
-	public CommandSenderProxy(CommandSender originator) {
-		this(originator, originator, false);
+	private final CommandSender	originator;
+	private final CommandSender	recipient;
+	boolean						silent;
+
+
+
+
+	public CommandSenderProxy(final CommandSender originator) {
+		this( originator, originator, false );
 	}
 
-	public CommandSenderProxy(CommandSender originator, boolean silent) {
-		this(originator, originator, silent);
+
+
+
+	public CommandSenderProxy(final CommandSender originator, final boolean silent) {
+		this( originator, originator, silent );
 	}
 
-	public CommandSenderProxy(CommandSender originator, CommandSender recipient) {
-		this(originator, recipient, false);
+
+
+
+	public CommandSenderProxy(final CommandSender originator, final CommandSender recipient) {
+		this( originator, recipient, false );
 	}
 
-	public CommandSenderProxy(CommandSender originator,
-			CommandSender recipient, boolean silent) {
+
+
+
+	public CommandSenderProxy(final CommandSender originator, final CommandSender recipient, final boolean silent) {
 		this.originator = originator;
 		this.recipient = recipient;
 		this.silent = silent;
 	}
 
-	public PermissionAttachment addAttachment(Plugin plugin) {
-		return originator.addAttachment(plugin);
+
+
+
+	@Override
+	public PermissionAttachment addAttachment( final Plugin plugin ) {
+		return this.originator.addAttachment( plugin );
 	}
 
-	public PermissionAttachment addAttachment(Plugin plugin, int ticks) {
-		return originator.addAttachment(plugin, ticks);
+
+
+
+	@Override
+	public PermissionAttachment addAttachment( final Plugin plugin, final int ticks ) {
+		return this.originator.addAttachment( plugin, ticks );
 	}
 
-	public PermissionAttachment addAttachment(Plugin plugin, String name,
-			boolean value) {
-		return originator.addAttachment(plugin, name, value);
+
+
+
+	@Override
+	public PermissionAttachment addAttachment( final Plugin plugin, final String name, final boolean value ) {
+		return this.originator.addAttachment( plugin, name, value );
 	}
 
-	public PermissionAttachment addAttachment(Plugin plugin, String name,
-			boolean value, int ticks) {
-		return originator.addAttachment(plugin, name, value, ticks);
+
+
+
+	@Override
+	public PermissionAttachment addAttachment( final Plugin plugin, final String name, final boolean value, final int ticks ) {
+		return this.originator.addAttachment( plugin, name, value, ticks );
 	}
 
+
+
+
+	@Override
 	public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-		return originator.getEffectivePermissions();
+		return this.originator.getEffectivePermissions();
 	}
 
+
+
+
+	@Override
 	public String getName() {
-		return originator.getName();
+		return this.originator.getName();
 	}
 
+
+
+
+	@Override
 	public Server getServer() {
-		return originator.getServer();
+		return this.originator.getServer();
 	}
 
-	public boolean hasPermission(Permission perm) {
-		return originator.hasPermission(perm);
+
+
+
+	@Override
+	public boolean hasPermission( final Permission perm ) {
+		return this.originator.hasPermission( perm );
 	}
 
-	public boolean hasPermission(String name) {
-		return originator.hasPermission(name);
+
+
+
+	@Override
+	public boolean hasPermission( final String name ) {
+		return this.originator.hasPermission( name );
 	}
 
+
+
+
+	@Override
 	public boolean isOp() {
-		return originator.isOp();
+		return this.originator.isOp();
 	}
 
-	public boolean isPermissionSet(Permission perm) {
-		return originator.isPermissionSet(perm);
+
+
+
+	@Override
+	public boolean isPermissionSet( final Permission perm ) {
+		return this.originator.isPermissionSet( perm );
 	}
 
-	public boolean isPermissionSet(String name) {
-		return originator.isPermissionSet(name);
+
+
+
+	@Override
+	public boolean isPermissionSet( final String name ) {
+		return this.originator.isPermissionSet( name );
 	}
+
+
+
 
 	public boolean isSilent() {
-		return silent;
+		return this.silent;
 	}
 
+
+
+
+	@Override
 	public void recalculatePermissions() {
-		originator.recalculatePermissions();
+		this.originator.recalculatePermissions();
 	}
 
-	public void removeAttachment(PermissionAttachment attachment) {
-		originator.removeAttachment(attachment);
+
+
+
+	@Override
+	public void removeAttachment( final PermissionAttachment attachment ) {
+		this.originator.removeAttachment( attachment );
 	}
 
-	public void sendMessage(String message) {
-		if (!silent && recipient != null) {
-			recipient.sendMessage(message);
-		}
+
+
+
+	@Override
+	public void sendMessage( final String message ) {
+		if ( !this.silent && this.recipient != null )
+			this.recipient.sendMessage( message );
 	}
 
-	public void sendMessage(String[] messages) {
-		if (!silent && recipient != null) {
-			recipient.sendMessage(messages);
-		}
+
+
+
+	@Override
+	public void sendMessage( final String[] messages ) {
+		if ( !this.silent && this.recipient != null )
+			this.recipient.sendMessage( messages );
 	}
 
-	public void setOp(boolean value) {
-		originator.setOp(value);
+
+
+
+	@Override
+	public void setOp( final boolean value ) {
+		this.originator.setOp( value );
 	}
 
-	public void setSilent(boolean silent) {
+
+
+
+	public void setSilent( final boolean silent ) {
 		this.silent = silent;
 	}
 }

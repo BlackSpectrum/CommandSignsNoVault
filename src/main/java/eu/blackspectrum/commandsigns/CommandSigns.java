@@ -37,27 +37,25 @@ public class CommandSigns extends JavaPlugin
 
 
 	public File getUpdateFile() {
-		return new File( getServer().getUpdateFolderFile().getAbsoluteFile(), super.getFile().getName() );
+		return new File( this.getServer().getUpdateFolderFile().getAbsoluteFile(), super.getFile().getName() );
 	}
 
 
 
 
-	public boolean hasPermission( CommandSender player, String string ) {
-		return hasPermission( player, string, true );
+	public boolean hasPermission( final CommandSender player, final String string ) {
+		return this.hasPermission( player, string, true );
 	}
 
 
 
 
-	public boolean hasPermission( CommandSender player, String string, boolean notify ) {
+	public boolean hasPermission( final CommandSender player, final String string, final boolean notify ) {
 		boolean perm;
 		perm = player.hasPermission( string );
 
 		if ( perm == false && notify )
-		{
-			messenger.sendMessage( player, "failure.no_perms" );
-		}
+			this.messenger.sendMessage( player, "failure.no_perms" );
 		return perm;
 	}
 
@@ -65,8 +63,8 @@ public class CommandSigns extends JavaPlugin
 
 
 	public void load() {
-		messenger.load();
-		loader.loadFile();
+		this.messenger.load();
+		this.loader.loadFile();
 	}
 
 
@@ -74,7 +72,7 @@ public class CommandSigns extends JavaPlugin
 
 	@Override
 	public void onDisable() {
-		loader.saveFile();
+		this.loader.saveFile();
 	}
 
 
@@ -82,10 +80,10 @@ public class CommandSigns extends JavaPlugin
 
 	@Override
 	public void onEnable() {
-		load();
-		PluginManager pm = getServer().getPluginManager();
-		getCommand( "commandsigns" ).setExecutor( commandExecutor );
-		pm.registerEvents( listener, this );
+		this.load();
+		final PluginManager pm = this.getServer().getPluginManager();
+		this.getCommand( "commandsigns" ).setExecutor( this.commandExecutor );
+		pm.registerEvents( this.listener, this );
 	}
 
 }
