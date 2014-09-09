@@ -1,6 +1,5 @@
 package eu.blackspectrum.commandsigns;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,14 +31,6 @@ public class CommandSigns extends JavaPlugin
 
 	public SignLoader								loader			= new SignLoader( this );
 	public Messaging								messenger		= new Messaging( this );
-
-
-
-
-	public File getUpdateFile() {
-		return new File( this.getServer().getUpdateFolderFile().getAbsoluteFile(), super.getFile().getName() );
-	}
-
 
 
 
