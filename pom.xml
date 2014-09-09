@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>eu.blackspectrum</groupId>
   <artifactId>CommandSignsNoVault</artifactId>
-  <version>1.9.1</version>
+  <version>1.0</version>
   <name>CommandSignsNoVault</name>
   <build>
     <plugins>
