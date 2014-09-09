@@ -1,4 +1,4 @@
-name: ${project.name}
+name: CommandSigns
 main: ${project.groupId}.commandsigns.CommandSigns
 version: ${project.version}
 authors: [Mats391, zonedabone, CJxD, HansAnderson]
