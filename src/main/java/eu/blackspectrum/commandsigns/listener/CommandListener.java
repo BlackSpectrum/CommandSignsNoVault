@@ -16,6 +16,24 @@ import eu.blackspectrum.commandsigns.util.SignText;
 public class CommandListener implements CommandExecutor
 {
 
+private static CommandListener instance = new CommandListener();
+	
+	public static CommandListener get(){
+		return instance;
+	}
+	
+	private boolean	registered	= false;
+
+
+
+
+	public void register() {
+		if ( !this.registered )
+		{
+			CommandSigns.get().getCommand( "commandsigns" ).setExecutor( this );
+			this.registered = true;
+		}
+	}
 
 	public void finishEditing( final Player player ) {
 		CommandSigns.get().playerStates.remove( player );

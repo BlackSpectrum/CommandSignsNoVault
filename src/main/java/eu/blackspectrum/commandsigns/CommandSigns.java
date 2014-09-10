@@ -6,7 +6,6 @@ import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import eu.blackspectrum.commandsigns.config.Messaging;
@@ -21,10 +20,6 @@ public class CommandSigns extends JavaPlugin
 
 
 	private static CommandSigns						instance;
-
-	// Listeners
-	private final EventListener						listener		= new EventListener();
-	public CommandListener							commandExecutor	= new CommandListener();
 
 	// Plugin variables
 	public final Map<Location, SignText>			activeSigns		= new HashMap<Location, SignText>();
@@ -89,9 +84,13 @@ public class CommandSigns extends JavaPlugin
 	@Override
 	public void onEnable() {
 		this.load();
-		final PluginManager pm = this.getServer().getPluginManager();
-		this.getCommand( "commandsigns" ).setExecutor( this.commandExecutor );
-		pm.registerEvents( this.listener, this );
+
+		// ***************************
+		// Register listener
+		// ***************************
+		EventListener.get().register();
+		CommandListener.get().register();
+		// ***************************
 	}
 
 }

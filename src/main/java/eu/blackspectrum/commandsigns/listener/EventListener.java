@@ -1,5 +1,6 @@
 package eu.blackspectrum.commandsigns.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -19,6 +20,25 @@ import eu.blackspectrum.commandsigns.util.SignText;
 public class EventListener implements Listener
 {
 
+	private static EventListener instance = new EventListener();
+	
+	public static EventListener get(){
+		return instance;
+	}
+	
+	private boolean	registered	= false;
+
+
+
+
+	public void register() {
+		if ( !this.registered )
+		{
+			Bukkit.getPluginManager().registerEvents( this, CommandSigns.get() );
+			this.registered = true;
+		}
+	}
+	
 
 	public void handleRedstone( final Block b ) {
 		final Location csl = b.getLocation();
