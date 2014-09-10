@@ -23,35 +23,24 @@ public class SignLoader
 {
 
 
-	private final CommandSigns	plugin;
-
-
-
-
-	public SignLoader(final CommandSigns plugin) {
-		this.plugin = plugin;
-	}
-
-
-
-
 	public synchronized void loadFile() {
-		this.plugin.activeSigns.clear();
+		CommandSigns.get().activeSigns.clear();
 
-		if ( new File( this.plugin.getDataFolder(), "signs.dat" ).exists() )
+		if ( new File( CommandSigns.get().getDataFolder(), "signs.dat" ).exists() )
 		{
 			this.loadOldFile();
-			if ( !new File( this.plugin.getDataFolder(), "signs.dat" ).exists() )
+			if ( !new File( CommandSigns.get().getDataFolder(), "signs.dat" ).exists() )
 				this.saveFile();
-			new File( this.plugin.getDataFolder(), "signs.dat" ).renameTo( new File( this.plugin.getDataFolder(), "signs.bak" ) );
+			new File( CommandSigns.get().getDataFolder(), "signs.dat" )
+					.renameTo( new File( CommandSigns.get().getDataFolder(), "signs.bak" ) );
 		}
 
-		final FileConfiguration config = YamlConfiguration.loadConfiguration( new File( this.plugin.getDataFolder(), "signs.yml" ) );
+		final FileConfiguration config = YamlConfiguration.loadConfiguration( new File( CommandSigns.get().getDataFolder(), "signs.yml" ) );
 		final ConfigurationSection data = config.getConfigurationSection( "signs" );
 
 		if ( data == null )
 		{
-			this.plugin.getLogger().info( "No signs found." );
+			CommandSigns.get().getLogger().info( "No signs found." );
 			return;
 		}
 
@@ -97,14 +86,14 @@ public class SignLoader
 				for ( final String subKey : cooldowns.getKeys( false ) )
 					timeouts.put( subKey, cooldowns.getLong( subKey ) );
 
-				this.plugin.activeSigns.put( loc, cst );
+				CommandSigns.get().activeSigns.put( loc, cst );
 			}
 			catch ( final Exception ex )
 			{
-				this.plugin.getLogger().warning( "Unable to load sign " + attempts + " in signs.yml. " + ex.getMessage() );
+				CommandSigns.get().getLogger().warning( "Unable to load sign " + attempts + " in signs.yml. " + ex.getMessage() );
 				ex.printStackTrace();
 			}
-		this.plugin.getLogger().info( "Successfully loaded " + this.plugin.activeSigns.size() + " signs" );
+		CommandSigns.get().getLogger().info( "Successfully loaded " + CommandSigns.get().activeSigns.size() + " signs" );
 	}
 
 
@@ -113,12 +102,12 @@ public class SignLoader
 	public synchronized void loadOldFile() {
 		try
 		{
-			final File file = new File( this.plugin.getDataFolder(), "signs.dat" );
+			final File file = new File( CommandSigns.get().getDataFolder(), "signs.dat" );
 			if ( file.exists() )
 			{
 				final FileInputStream inStream = new FileInputStream( file );
 				final Scanner scanner = new Scanner( inStream );
-				this.plugin.activeSigns.clear();
+				CommandSigns.get().activeSigns.clear();
 
 				String line = "";
 				String[] raw = null;
@@ -156,16 +145,16 @@ public class SignLoader
 						final SignText cst = new SignText( owner, redstone );
 						for ( final String command : raw[5].split( "[\u00B6\u001E]" ) )
 							cst.addLine( command );
-						this.plugin.activeSigns.put( csl, cst );
+						CommandSigns.get().activeSigns.put( csl, cst );
 					}
 					catch ( final Exception ex )
 					{
-						this.plugin.getLogger().warning( "Unable to load sign in signs.dat line " + lineNumber );
+						CommandSigns.get().getLogger().warning( "Unable to load sign in signs.dat line " + lineNumber );
 					}
 				}
 				scanner.close();
 				inStream.close();
-				this.plugin.getLogger().info( "Imported " + this.plugin.activeSigns.size() + " old signs" );
+				CommandSigns.get().getLogger().info( "Imported " + CommandSigns.get().activeSigns.size() + " old signs" );
 			}
 		}
 		catch ( final Exception ex )
@@ -181,7 +170,7 @@ public class SignLoader
 		final FileConfiguration config = new YamlConfiguration();
 		final ConfigurationSection data = config.createSection( "signs" );
 
-		for ( final Map.Entry<Location, SignText> sign : this.plugin.activeSigns.entrySet() )
+		for ( final Map.Entry<Location, SignText> sign : CommandSigns.get().activeSigns.entrySet() )
 		{
 			final Location loc = sign.getKey();
 			final SignText cst = sign.getValue();
@@ -197,15 +186,15 @@ public class SignLoader
 
 			try
 			{
-				config.save( new File( this.plugin.getDataFolder(), "signs.yml" ) );
+				config.save( new File( CommandSigns.get().getDataFolder(), "signs.yml" ) );
 			}
 			catch ( final IOException e )
 			{
-				this.plugin.getLogger().severe( "Failed to save CommandSigns" );
+				CommandSigns.get().getLogger().severe( "Failed to save CommandSigns" );
 				e.printStackTrace();
 			}
 		}
-		this.plugin.getLogger().info( this.plugin.activeSigns.size() + " signs saved" );
+		CommandSigns.get().getLogger().info( CommandSigns.get().activeSigns.size() + " signs saved" );
 	}
 
 
@@ -214,10 +203,10 @@ public class SignLoader
 	public synchronized void saveOldFile() {
 		try
 		{
-			final File file = new File( this.plugin.getDataFolder(), "signs.dat" );
+			final File file = new File( CommandSigns.get().getDataFolder(), "signs.dat" );
 			if ( !file.exists() )
 			{
-				this.plugin.getDataFolder().mkdir();
+				CommandSigns.get().getDataFolder().mkdir();
 				file.createNewFile();
 			}
 			final BufferedWriter writer = new BufferedWriter( new FileWriter( file ) );
@@ -230,7 +219,7 @@ public class SignLoader
 			int signNumber = 0;
 
 			writer.write( "" );
-			for ( final Map.Entry<Location, SignText> entry : this.plugin.activeSigns.entrySet() )
+			for ( final Map.Entry<Location, SignText> entry : CommandSigns.get().activeSigns.entrySet() )
 				try
 				{
 					signNumber++;
@@ -262,15 +251,15 @@ public class SignLoader
 				catch ( final Exception ex )
 				{
 					if ( csl != null )
-						this.plugin.getLogger().warning( "Unable to save sign #" + signNumber + " at " + csl.toString() );
+						CommandSigns.get().getLogger().warning( "Unable to save sign #" + signNumber + " at " + csl.toString() );
 					else
-						this.plugin.getLogger().warning( "Unable to save sign #" + signNumber );
+						CommandSigns.get().getLogger().warning( "Unable to save sign #" + signNumber );
 				}
 			writer.close();
 		}
 		catch ( final Exception ex )
 		{
-			this.plugin.getLogger().severe( "Failed to save signs!" );
+			CommandSigns.get().getLogger().severe( "Failed to save signs!" );
 			ex.printStackTrace();
 		}
 	}

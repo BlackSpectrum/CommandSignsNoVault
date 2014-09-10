@@ -15,7 +15,7 @@ public class YamlLoader
 
 	/**
 	 * Loads or updates a YAML configuration file
-	 * 
+	 *
 	 * @param plugin
 	 * @param filename
 	 * @return

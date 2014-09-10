@@ -20,23 +20,11 @@ public class EventListener implements Listener
 {
 
 
-	private final CommandSigns	plugin;
-
-
-
-
-	public EventListener(final CommandSigns plugin) {
-		this.plugin = plugin;
-	}
-
-
-
-
 	public void handleRedstone( final Block b ) {
 		final Location csl = b.getLocation();
-		final SignText text = this.plugin.activeSigns.get( csl );
+		final SignText text = CommandSigns.get().activeSigns.get( csl );
 		if ( text != null && text.isRedstone() )
-			new SignExecutor( this.plugin, null, csl, null ).runLines();
+			new SignExecutor( null, csl, null ).runLines();
 	}
 
 
@@ -47,9 +35,9 @@ public class EventListener implements Listener
 		if ( event.isCancelled() )
 			return;
 		final Location location = event.getBlock().getLocation();
-		if ( this.plugin.activeSigns.containsKey( location ) )
+		if ( CommandSigns.get().activeSigns.containsKey( location ) )
 		{
-			this.plugin.messenger.sendMessage( event.getPlayer(), "failure.remove_first" );
+			CommandSigns.get().messenger.sendMessage( event.getPlayer(), "failure.remove_first" );
 			event.setCancelled( true );
 		}
 	}
@@ -66,7 +54,7 @@ public class EventListener implements Listener
 			block = event.getClickedBlock();
 			if ( block != null )
 			{
-				final ClickHandler signClickEvent = new ClickHandler( this.plugin, event.getPlayer(), block );
+				final ClickHandler signClickEvent = new ClickHandler( event.getPlayer(), block );
 				if ( signClickEvent.onInteract( action ) && action != Action.PHYSICAL )
 					event.setCancelled( true );
 			}

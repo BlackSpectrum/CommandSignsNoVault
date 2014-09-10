@@ -20,17 +20,34 @@ public class CommandSigns extends JavaPlugin
 {
 
 
+	private static CommandSigns						instance;
+
 	// Listeners
-	private final EventListener						listener		= new EventListener( this );
-	public CommandListener							commandExecutor	= new CommandListener( this );
+	private final EventListener						listener		= new EventListener();
+	public CommandListener							commandExecutor	= new CommandListener();
 
 	// Plugin variables
 	public final Map<Location, SignText>			activeSigns		= new HashMap<Location, SignText>();
 	public final Map<OfflinePlayer, PlayerState>	playerStates	= new HashMap<OfflinePlayer, PlayerState>();
 	public final Map<OfflinePlayer, SignText>		playerText		= new HashMap<OfflinePlayer, SignText>();
 
-	public SignLoader								loader			= new SignLoader( this );
+	public SignLoader								loader			= new SignLoader();
 	public Messaging								messenger		= new Messaging( this );
+
+
+
+
+	public static CommandSigns get() {
+		return instance;
+	}
+
+
+
+
+	public CommandSigns() {
+		instance = this;
+	}
+
 
 
 

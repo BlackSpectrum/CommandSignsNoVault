@@ -17,22 +17,10 @@ public class CommandListener implements CommandExecutor
 {
 
 
-	private final CommandSigns	plugin;
-
-
-
-
-	public CommandListener(final CommandSigns plugin) {
-		this.plugin = plugin;
-	}
-
-
-
-
 	public void finishEditing( final Player player ) {
-		this.plugin.playerStates.remove( player );
-		this.plugin.playerText.remove( player );
-		this.plugin.messenger.sendMessage( player, "success.done_editing" );
+		CommandSigns.get().playerStates.remove( player );
+		CommandSigns.get().playerText.remove( player );
+		CommandSigns.get().messenger.sendMessage( player, "success.done_editing" );
 	}
 
 
@@ -85,7 +73,7 @@ public class CommandListener implements CommandExecutor
 				return this.view( sender, player, args );
 			else
 			{
-				this.plugin.messenger.sendMessage( sender, "failure.wrong_syntax" );
+				CommandSigns.get().messenger.sendMessage( sender, "failure.wrong_syntax" );
 				return true;
 			}
 		}
@@ -97,26 +85,26 @@ public class CommandListener implements CommandExecutor
 
 	private void clipboard( final CommandSender sender, final Player player, final int lineNumber, final int textStart, final String[] args ) {
 		if ( lineNumber < 1 )
-			this.plugin.messenger.sendMessage( player, "failure.invalid_line" );
+			CommandSigns.get().messenger.sendMessage( player, "failure.invalid_line" );
 		else
 		{
-			if ( this.plugin.playerStates.get( player ) == PlayerState.EDIT_SELECT )
-				this.plugin.messenger.sendMessage( player, "failure.must_select" );
-			SignText text = this.plugin.playerText.get( player );
+			if ( CommandSigns.get().playerStates.get( player ) == PlayerState.EDIT_SELECT )
+				CommandSigns.get().messenger.sendMessage( player, "failure.must_select" );
+			SignText text = CommandSigns.get().playerText.get( player );
 			if ( text == null )
 			{
 				text = new SignText( player.getName(), false );
-				this.plugin.playerText.put( player, text );
+				CommandSigns.get().playerText.put( player, text );
 			}
 			final String line = StringUtils.join( args, " ", textStart, args.length );
-			if ( line.startsWith( "/*" ) && !this.plugin.hasPermission( player, "commandsigns.create.super", false ) )
-				this.plugin.messenger.sendMessage( player, "failure.no_super" );
+			if ( line.startsWith( "/*" ) && !CommandSigns.get().hasPermission( player, "commandsigns.create.super", false ) )
+				CommandSigns.get().messenger.sendMessage( player, "failure.no_super" );
 			if ( ( line.startsWith( "/^" ) || line.startsWith( "/#" ) )
-					&& !this.plugin.hasPermission( player, "commandsigns.create.op", false ) )
-				this.plugin.messenger.sendMessage( player, "failure.no_op" );
+					&& !CommandSigns.get().hasPermission( player, "commandsigns.create.op", false ) )
+				CommandSigns.get().messenger.sendMessage( player, "failure.no_op" );
 			text.setLine( lineNumber, line );
-			this.plugin.messenger.sendRaw( player, "success.line_print", new String[] { "NUMBER", "LINE" }, new String[] { "" + lineNumber,
-					line } );
+			CommandSigns.get().messenger.sendRaw( player, "success.line_print", new String[] { "NUMBER", "LINE" }, new String[] {
+					"" + lineNumber, line } );
 		}
 	}
 
@@ -125,18 +113,18 @@ public class CommandListener implements CommandExecutor
 
 	protected boolean add( final CommandSender sender, final Player player, final int lineNumber, final String[] args ) {
 		if ( player == null )
-			this.plugin.messenger.sendMessage( sender, "failure.player_only" );
-		if ( this.plugin.hasPermission( player, "commandsigns.create.regular" ) )
+			CommandSigns.get().messenger.sendMessage( sender, "failure.player_only" );
+		if ( CommandSigns.get().hasPermission( player, "commandsigns.create.regular" ) )
 		{
 			this.clipboard( sender, player, lineNumber, 1, args );
-			if ( this.plugin.playerStates.get( player ) != PlayerState.EDIT )
+			if ( CommandSigns.get().playerStates.get( player ) != PlayerState.EDIT )
 			{
-				this.plugin.playerStates.put( player, PlayerState.ENABLE );
-				this.plugin.messenger.sendMessage( player, "progress.add" );
+				CommandSigns.get().playerStates.put( player, PlayerState.ENABLE );
+				CommandSigns.get().messenger.sendMessage( player, "progress.add" );
 			}
 		}
 		else
-			this.plugin.messenger.sendMessage( player, "failure.no_perms" );
+			CommandSigns.get().messenger.sendMessage( player, "failure.no_perms" );
 		return true;
 	}
 
@@ -144,10 +132,10 @@ public class CommandListener implements CommandExecutor
 
 
 	protected boolean batch( final CommandSender sender, final Player player, final String[] args ) {
-		PlayerState ps = this.plugin.playerStates.get( player );
+		PlayerState ps = CommandSigns.get().playerStates.get( player );
 		if ( ps == null )
 		{
-			this.plugin.messenger.sendMessage( player, "failure.not_in_mode" );
+			CommandSigns.get().messenger.sendMessage( player, "failure.not_in_mode" );
 			return false;
 		}
 		switch ( ps ) {
@@ -192,9 +180,9 @@ public class CommandListener implements CommandExecutor
 			ps = PlayerState.REDSTONE;
 			break;
 		default:
-			this.plugin.messenger.sendMessage( player, "failure.no_batch" );
+			CommandSigns.get().messenger.sendMessage( player, "failure.no_batch" );
 		}
-		this.plugin.playerStates.put( player, ps );
+		CommandSigns.get().playerStates.put( player, ps );
 		return true;
 	}
 
@@ -203,18 +191,18 @@ public class CommandListener implements CommandExecutor
 
 	protected boolean clear( final CommandSender sender, final Player player, final String[] args ) {
 		if ( player == null )
-			this.plugin.messenger.sendMessage( sender, "failure.player_only" );
-		if ( this.plugin.hasPermission( player, "commandsigns.remove" ) )
+			CommandSigns.get().messenger.sendMessage( sender, "failure.player_only" );
+		if ( CommandSigns.get().hasPermission( player, "commandsigns.remove" ) )
 		{
-			final PlayerState ps = this.plugin.playerStates.get( player );
+			final PlayerState ps = CommandSigns.get().playerStates.get( player );
 			if ( ps == PlayerState.EDIT || ps == PlayerState.EDIT_SELECT )
 				this.finishEditing( player );
-			this.plugin.playerStates.remove( player );
-			this.plugin.playerText.remove( player );
-			this.plugin.messenger.sendMessage( player, "success.cleared" );
+			CommandSigns.get().playerStates.remove( player );
+			CommandSigns.get().playerText.remove( player );
+			CommandSigns.get().messenger.sendMessage( player, "success.cleared" );
 		}
 		else
-			this.plugin.messenger.sendMessage( player, "failure.no_perms" );
+			CommandSigns.get().messenger.sendMessage( player, "failure.no_perms" );
 		return true;
 	}
 
@@ -223,17 +211,17 @@ public class CommandListener implements CommandExecutor
 
 	protected boolean copy( final CommandSender sender, final Player player, final String[] args ) {
 		if ( player == null )
-			this.plugin.messenger.sendMessage( sender, "failure.player_only" );
-		if ( this.plugin.hasPermission( player, "commandsigns.create.regular" ) )
+			CommandSigns.get().messenger.sendMessage( sender, "failure.player_only" );
+		if ( CommandSigns.get().hasPermission( player, "commandsigns.create.regular" ) )
 		{
-			final PlayerState ps = this.plugin.playerStates.get( player );
+			final PlayerState ps = CommandSigns.get().playerStates.get( player );
 			if ( ps == PlayerState.EDIT || ps == PlayerState.EDIT_SELECT )
 				this.finishEditing( player );
-			this.plugin.playerStates.put( player, PlayerState.COPY );
-			this.plugin.messenger.sendMessage( player, "progress.copy" );
+			CommandSigns.get().playerStates.put( player, PlayerState.COPY );
+			CommandSigns.get().messenger.sendMessage( player, "progress.copy" );
 		}
 		else
-			this.plugin.messenger.sendMessage( player, "failure.no_perms" );
+			CommandSigns.get().messenger.sendMessage( player, "failure.no_perms" );
 		return true;
 	}
 
@@ -241,16 +229,16 @@ public class CommandListener implements CommandExecutor
 
 
 	protected boolean edit( final CommandSender sender, final Player player, final String[] args ) {
-		if ( this.plugin.hasPermission( sender, "commandsigns.edit", false ) )
+		if ( CommandSigns.get().hasPermission( sender, "commandsigns.edit", false ) )
 		{
-			final PlayerState ps = this.plugin.playerStates.get( player );
+			final PlayerState ps = CommandSigns.get().playerStates.get( player );
 			if ( ps == PlayerState.EDIT_SELECT || ps == PlayerState.EDIT )
 				this.finishEditing( player );
 			else
 			{
-				this.plugin.playerStates.put( player, PlayerState.EDIT_SELECT );
-				this.plugin.playerText.remove( player );
-				this.plugin.messenger.sendMessage( player, "progress.select_sign" );
+				CommandSigns.get().playerStates.put( player, PlayerState.EDIT_SELECT );
+				CommandSigns.get().playerText.remove( player );
+				CommandSigns.get().messenger.sendMessage( player, "progress.select_sign" );
 			}
 		}
 		return true;
@@ -261,18 +249,18 @@ public class CommandListener implements CommandExecutor
 
 	protected boolean insert( final CommandSender sender, final Player player, final int lineNumber, final String[] args ) {
 		if ( player == null )
-			this.plugin.messenger.sendMessage( sender, "failure.player_only" );
-		if ( this.plugin.hasPermission( player, "commandsigns.create.regular" ) )
+			CommandSigns.get().messenger.sendMessage( sender, "failure.player_only" );
+		if ( CommandSigns.get().hasPermission( player, "commandsigns.create.regular" ) )
 		{
 			this.clipboard( sender, player, lineNumber, 2, args );
-			if ( this.plugin.playerStates.get( player ) != PlayerState.EDIT )
+			if ( CommandSigns.get().playerStates.get( player ) != PlayerState.EDIT )
 			{
-				this.plugin.playerStates.put( player, PlayerState.INSERT );
-				this.plugin.messenger.sendMessage( player, "progress.add" );
+				CommandSigns.get().playerStates.put( player, PlayerState.INSERT );
+				CommandSigns.get().messenger.sendMessage( player, "progress.add" );
 			}
 		}
 		else
-			this.plugin.messenger.sendMessage( player, "failure.no_perms" );
+			CommandSigns.get().messenger.sendMessage( player, "failure.no_perms" );
 		return true;
 	}
 
@@ -281,17 +269,17 @@ public class CommandListener implements CommandExecutor
 
 	protected boolean read( final CommandSender sender, final Player player, final String[] args ) {
 		if ( player == null )
-			this.plugin.messenger.sendMessage( sender, "failure.player_only" );
-		if ( this.plugin.hasPermission( player, "commandsigns.create.regular" ) )
+			CommandSigns.get().messenger.sendMessage( sender, "failure.player_only" );
+		if ( CommandSigns.get().hasPermission( player, "commandsigns.create.regular" ) )
 		{
-			final PlayerState ps = this.plugin.playerStates.get( player );
+			final PlayerState ps = CommandSigns.get().playerStates.get( player );
 			if ( ps == PlayerState.EDIT || ps == PlayerState.EDIT_SELECT )
 				this.finishEditing( player );
-			this.plugin.playerStates.put( player, PlayerState.READ );
-			this.plugin.messenger.sendMessage( player, "progress.read" );
+			CommandSigns.get().playerStates.put( player, PlayerState.READ );
+			CommandSigns.get().messenger.sendMessage( player, "progress.read" );
 		}
 		else
-			this.plugin.messenger.sendMessage( player, "failure.no_perms" );
+			CommandSigns.get().messenger.sendMessage( player, "failure.no_perms" );
 		return true;
 	}
 
@@ -300,17 +288,17 @@ public class CommandListener implements CommandExecutor
 
 	protected boolean redstone( final CommandSender sender, final Player player, final String[] args ) {
 		if ( player == null )
-			this.plugin.messenger.sendMessage( sender, "failure.player_only" );
-		if ( this.plugin.hasPermission( player, "commandsigns.create.redstone" ) )
+			CommandSigns.get().messenger.sendMessage( sender, "failure.player_only" );
+		if ( CommandSigns.get().hasPermission( player, "commandsigns.create.redstone" ) )
 		{
-			final PlayerState ps = this.plugin.playerStates.get( player );
+			final PlayerState ps = CommandSigns.get().playerStates.get( player );
 			if ( ps == PlayerState.EDIT || ps == PlayerState.EDIT_SELECT )
 				this.finishEditing( player );
-			this.plugin.playerStates.put( player, PlayerState.REDSTONE );
-			this.plugin.messenger.sendMessage( player, "progress.redstone" );
+			CommandSigns.get().playerStates.put( player, PlayerState.REDSTONE );
+			CommandSigns.get().messenger.sendMessage( player, "progress.redstone" );
 		}
 		else
-			this.plugin.messenger.sendMessage( player, "failure.no_perms" );
+			CommandSigns.get().messenger.sendMessage( player, "failure.no_perms" );
 		return true;
 	}
 
@@ -318,13 +306,13 @@ public class CommandListener implements CommandExecutor
 
 
 	protected boolean reload( final CommandSender sender, final Player player, final String[] args ) {
-		if ( this.plugin.hasPermission( sender, "commandsigns.reload", false ) )
+		if ( CommandSigns.get().hasPermission( sender, "commandsigns.reload", false ) )
 		{
-			this.plugin.load();
-			this.plugin.messenger.sendMessage( sender, "success.reloaded" );
+			CommandSigns.get().load();
+			CommandSigns.get().messenger.sendMessage( sender, "success.reloaded" );
 		}
 		else
-			this.plugin.messenger.sendMessage( player, "failure.no_perms" );
+			CommandSigns.get().messenger.sendMessage( player, "failure.no_perms" );
 		return true;
 	}
 
@@ -333,17 +321,17 @@ public class CommandListener implements CommandExecutor
 
 	protected boolean remove( final CommandSender sender, final Player player, final String[] args ) {
 		if ( player == null )
-			this.plugin.messenger.sendMessage( sender, "failure.player_only" );
-		if ( this.plugin.hasPermission( player, "commandsigns.remove" ) )
+			CommandSigns.get().messenger.sendMessage( sender, "failure.player_only" );
+		if ( CommandSigns.get().hasPermission( player, "commandsigns.remove" ) )
 		{
-			final PlayerState ps = this.plugin.playerStates.get( player );
+			final PlayerState ps = CommandSigns.get().playerStates.get( player );
 			if ( ps == PlayerState.EDIT || ps == PlayerState.EDIT_SELECT )
 				this.finishEditing( player );
-			this.plugin.playerStates.put( player, PlayerState.REMOVE );
-			this.plugin.messenger.sendMessage( player, "progress.remove" );
+			CommandSigns.get().playerStates.put( player, PlayerState.REMOVE );
+			CommandSigns.get().messenger.sendMessage( player, "progress.remove" );
 		}
 		else
-			this.plugin.messenger.sendMessage( player, "failure.no_perms" );
+			CommandSigns.get().messenger.sendMessage( player, "failure.no_perms" );
 		return true;
 	}
 
@@ -351,10 +339,10 @@ public class CommandListener implements CommandExecutor
 
 
 	protected boolean save( final CommandSender sender, final Player player, final String[] args ) {
-		if ( this.plugin.hasPermission( sender, "commandsigns.save", false ) )
+		if ( CommandSigns.get().hasPermission( sender, "commandsigns.save", false ) )
 		{
-			this.plugin.loader.saveFile();
-			this.plugin.messenger.sendMessage( sender, "success.saved" );
+			CommandSigns.get().loader.saveFile();
+			CommandSigns.get().messenger.sendMessage( sender, "success.saved" );
 		}
 		return true;
 	}
@@ -364,17 +352,17 @@ public class CommandListener implements CommandExecutor
 
 	protected boolean toggle( final CommandSender sender, final Player player, final String[] args ) {
 		if ( player == null )
-			this.plugin.messenger.sendMessage( sender, "failure.player_only" );
-		if ( this.plugin.hasPermission( player, "commandsigns.toggle" ) )
+			CommandSigns.get().messenger.sendMessage( sender, "failure.player_only" );
+		if ( CommandSigns.get().hasPermission( player, "commandsigns.toggle" ) )
 		{
-			final PlayerState ps = this.plugin.playerStates.get( player );
+			final PlayerState ps = CommandSigns.get().playerStates.get( player );
 			if ( ps == PlayerState.EDIT || ps == PlayerState.EDIT_SELECT )
 				this.finishEditing( player );
-			this.plugin.playerStates.put( player, PlayerState.TOGGLE );
-			this.plugin.messenger.sendMessage( player, "progress.toggle" );
+			CommandSigns.get().playerStates.put( player, PlayerState.TOGGLE );
+			CommandSigns.get().messenger.sendMessage( player, "progress.toggle" );
 		}
 		else
-			this.plugin.messenger.sendMessage( player, "failure.no_perms" );
+			CommandSigns.get().messenger.sendMessage( player, "failure.no_perms" );
 		return true;
 	}
 
@@ -383,10 +371,10 @@ public class CommandListener implements CommandExecutor
 
 	protected boolean view( final CommandSender sender, final Player player, final String[] args ) {
 		if ( player == null )
-			this.plugin.messenger.sendMessage( sender, "failure.player_only" );
-		if ( this.plugin.hasPermission( player, "commandsigns.create.regular" ) )
+			CommandSigns.get().messenger.sendMessage( sender, "failure.player_only" );
+		if ( CommandSigns.get().hasPermission( player, "commandsigns.create.regular" ) )
 		{
-			final SignText text = this.plugin.playerText.get( player );
+			final SignText text = CommandSigns.get().playerText.get( player );
 			if ( text == null )
 				player.sendMessage( "No text in clipboard" );
 			else
@@ -399,10 +387,10 @@ public class CommandListener implements CommandExecutor
 					i++;
 				}
 			}
-			this.plugin.playerStates.remove( player );
+			CommandSigns.get().playerStates.remove( player );
 		}
 		else
-			this.plugin.messenger.sendMessage( player, "failure.no_perms" );
+			CommandSigns.get().messenger.sendMessage( player, "failure.no_perms" );
 		return true;
 	}
 

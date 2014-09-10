@@ -12,7 +12,7 @@ public class Messaging extends ConfigStore
 
 
 	public Messaging(final CommandSigns plugin) {
-		super( plugin );
+		super();
 	}
 
 
@@ -23,7 +23,7 @@ public class Messaging extends ConfigStore
 	 */
 	@Override
 	public void load() {
-		final Configuration config = YamlLoader.loadResource( this.plugin, "messages.yml" );
+		final Configuration config = YamlLoader.loadResource( CommandSigns.get(), "messages.yml" );
 
 		for ( final String k : config.getKeys( true ) )
 			if ( !config.isConfigurationSection( k ) )

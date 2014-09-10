@@ -5,20 +5,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import eu.blackspectrum.commandsigns.CommandSigns;
-
 public abstract class ConfigStore implements Map<String, String>
 {
 
 
 	private final Map<String, String>	config	= new ConcurrentHashMap<String, String>();
-	protected CommandSigns				plugin;
 
 
 
 
-	public ConfigStore(final CommandSigns plugin) {
-		this.plugin = plugin;
+	public ConfigStore() {
 	}
 
 

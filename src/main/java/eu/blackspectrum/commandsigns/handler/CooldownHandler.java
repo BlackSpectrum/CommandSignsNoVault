@@ -2,6 +2,7 @@ package eu.blackspectrum.commandsigns.handler;
 
 import java.util.Map;
 
+import eu.blackspectrum.commandsigns.CommandSigns;
 import eu.blackspectrum.commandsigns.SignExecutor;
 
 public class CooldownHandler extends Handler
@@ -10,7 +11,6 @@ public class CooldownHandler extends Handler
 
 	@Override
 	public void handle( final SignExecutor e, final String command, final boolean silent, final boolean negate ) {
-		this.plugin = e.getPlugin();
 		if ( e.getPlayer() != null && command.startsWith( "~" ) )
 		{
 			int amount = 0;
@@ -45,10 +45,11 @@ public class CooldownHandler extends Handler
 					// Show error if not silent
 					if ( !silent )
 						if ( negate )
-							this.plugin.messenger.sendMessage( e.getPlayer(), "restriction.inverse_cooldown", new String[] { "COOLDOWN" },
-									new String[] { "" + amount / 1000 } );
+							CommandSigns.get().messenger.sendMessage( e.getPlayer(), "restriction.inverse_cooldown",
+									new String[] { "COOLDOWN" }, new String[] { "" + amount / 1000 } );
 						else
-							this.plugin.messenger.sendMessage( e.getPlayer(), "restriction.inverse_cooldown", new String[] { "COOLDOWN" },
+							CommandSigns.get().messenger.sendMessage( e.getPlayer(), "restriction.inverse_cooldown",
+									new String[] { "COOLDOWN" },
 									new String[] { "" + Math.round( ( amount + latest - System.currentTimeMillis() ) / 1000 + 1 ) } );
 					if ( negate )
 					{
@@ -70,9 +71,9 @@ public class CooldownHandler extends Handler
 				// Show error if not silent
 				if ( !silent )
 					if ( negate )
-						this.plugin.messenger.sendMessage( e.getPlayer(), "restriction.inverse_use_once" );
+						CommandSigns.get().messenger.sendMessage( e.getPlayer(), "restriction.inverse_use_once" );
 					else
-						this.plugin.messenger.sendMessage( e.getPlayer(), "restriction.use_once" );
+						CommandSigns.get().messenger.sendMessage( e.getPlayer(), "restriction.use_once" );
 				if ( negate )
 				{
 					lastUse.put( e.getPlayer().getName(), System.currentTimeMillis() );

@@ -12,15 +12,13 @@ public class ClickHandler
 {
 
 
-	private final Location		location;
-	private final Player		player;
-	private final CommandSigns	plugin;
+	private final Location	location;
+	private final Player	player;
 
 
 
 
-	public ClickHandler(final CommandSigns plugin, final Player player, final Block block) {
-		this.plugin = plugin;
+	public ClickHandler(final Player player, final Block block) {
 		this.player = player;
 		this.location = block.getLocation();
 	}
@@ -29,51 +27,51 @@ public class ClickHandler
 
 
 	public void copySign() {
-		synchronized ( this.plugin.activeSigns )
+		synchronized ( CommandSigns.get().activeSigns )
 		{
-			final SignText text = this.plugin.activeSigns.get( this.location );
+			final SignText text = CommandSigns.get().activeSigns.get( this.location );
 			if ( text == null )
 			{
-				this.plugin.messenger.sendMessage( this.player, "failure.not_a_sign" );
+				CommandSigns.get().messenger.sendMessage( this.player, "failure.not_a_sign" );
 				return;
 			}
-			final SignText clone = this.plugin.activeSigns.get( this.location ).clone( this.player.getName() );
-			this.plugin.playerText.put( this.player, clone );
+			final SignText clone = CommandSigns.get().activeSigns.get( this.location ).clone( this.player.getName() );
+			CommandSigns.get().playerText.put( this.player, clone );
 		}
 		this.readSign( true );
-		this.plugin.messenger.sendMessage( this.player, "success.copied" );
-		this.plugin.playerStates.put( this.player, PlayerState.ENABLE );
+		CommandSigns.get().messenger.sendMessage( this.player, "success.copied" );
+		CommandSigns.get().playerStates.put( this.player, PlayerState.ENABLE );
 	}
 
 
 
 
 	public void createSign( final boolean batch ) {
-		synchronized ( this.plugin.activeSigns )
+		synchronized ( CommandSigns.get().activeSigns )
 		{
-			if ( this.plugin.activeSigns.containsKey( this.location ) )
+			if ( CommandSigns.get().activeSigns.containsKey( this.location ) )
 			{
-				this.plugin.messenger.sendMessage( this.player, "failure.already_enabled" );
+				CommandSigns.get().messenger.sendMessage( this.player, "failure.already_enabled" );
 				return;
 			}
-			final SignText text = this.plugin.playerText.get( this.player );
+			final SignText text = CommandSigns.get().playerText.get( this.player );
 
 			try
 			{
 				text.trim();
-				this.plugin.activeSigns.put( this.location, text.clone( this.player.getName() ) );
-				this.plugin.messenger.sendMessage( this.player, "success.enabled" );
+				CommandSigns.get().activeSigns.put( this.location, text.clone( this.player.getName() ) );
+				CommandSigns.get().messenger.sendMessage( this.player, "success.enabled" );
 			}
 			catch ( final Exception e )
 			{
-				this.plugin.messenger.sendMessage( this.player, "failure.wrong_syntax" );
+				CommandSigns.get().messenger.sendMessage( this.player, "failure.wrong_syntax" );
 			}
 		}
 
 		if ( !batch )
 		{
-			this.plugin.playerStates.remove( this.player );
-			this.plugin.playerText.remove( this.player );
+			CommandSigns.get().playerStates.remove( this.player );
+			CommandSigns.get().playerText.remove( this.player );
 		}
 	}
 
@@ -82,18 +80,18 @@ public class ClickHandler
 
 	public void editSign() {
 		SignText cst;
-		synchronized ( this.plugin.activeSigns )
+		synchronized ( CommandSigns.get().activeSigns )
 		{
-			cst = this.plugin.activeSigns.get( this.location );
+			cst = CommandSigns.get().activeSigns.get( this.location );
 		}
 		if ( cst == null )
 		{
-			this.plugin.messenger.sendMessage( this.player, "failure.not_a_sign" );
+			CommandSigns.get().messenger.sendMessage( this.player, "failure.not_a_sign" );
 			return;
 		}
-		this.plugin.messenger.sendMessage( this.player, "progress.edit_started" );
-		this.plugin.playerText.put( this.player, cst );
-		this.plugin.playerStates.put( this.player, PlayerState.EDIT );
+		CommandSigns.get().messenger.sendMessage( this.player, "progress.edit_started" );
+		CommandSigns.get().playerText.put( this.player, cst );
+		CommandSigns.get().playerStates.put( this.player, PlayerState.EDIT );
 	}
 
 
@@ -101,16 +99,16 @@ public class ClickHandler
 
 	public void insert( final boolean batch ) {
 		SignText currentText;
-		synchronized ( this.plugin.activeSigns )
+		synchronized ( CommandSigns.get().activeSigns )
 		{
-			currentText = this.plugin.activeSigns.get( this.location );
+			currentText = CommandSigns.get().activeSigns.get( this.location );
 		}
 		if ( currentText == null )
 		{
-			this.plugin.messenger.sendMessage( this.player, "failure.not_a_sign" );
+			CommandSigns.get().messenger.sendMessage( this.player, "failure.not_a_sign" );
 			return;
 		}
-		final SignText newText = this.plugin.playerText.get( this.player );
+		final SignText newText = CommandSigns.get().playerText.get( this.player );
 
 		// Insert lines from last to first - that way you don't overwrite stuff
 		for ( int i = newText.count(); i >= 1; i-- )
@@ -122,11 +120,11 @@ public class ClickHandler
 		}
 		currentText.trim();
 
-		this.plugin.messenger.sendMessage( this.player, "success.done_editing" );
+		CommandSigns.get().messenger.sendMessage( this.player, "success.done_editing" );
 		if ( !batch )
 		{
-			this.plugin.playerStates.remove( this.player );
-			this.plugin.playerText.remove( this.player );
+			CommandSigns.get().playerStates.remove( this.player );
+			CommandSigns.get().playerText.remove( this.player );
 		}
 	}
 
@@ -135,9 +133,9 @@ public class ClickHandler
 
 	public boolean onInteract( final Action action ) {
 		PlayerState state;
-		synchronized ( this.plugin.activeSigns )
+		synchronized ( CommandSigns.get().activeSigns )
 		{
-			state = this.plugin.playerStates.get( this.player );
+			state = CommandSigns.get().playerStates.get( this.player );
 		}
 		if ( state != null )
 		{
@@ -186,12 +184,12 @@ public class ClickHandler
 				this.redstoneToggle( true );
 				break;
 			default:
-				return new SignExecutor( this.plugin, this.player, this.location, action ).runLines();
+				return new SignExecutor( this.player, this.location, action ).runLines();
 			}
 			return true;
 		}
 		else
-			return new SignExecutor( this.plugin, this.player, this.location, action ).runLines();
+			return new SignExecutor( this.player, this.location, action ).runLines();
 	}
 
 
@@ -199,56 +197,56 @@ public class ClickHandler
 
 	public void readSign( final boolean batch ) {
 		SignText text;
-		synchronized ( this.plugin.activeSigns )
+		synchronized ( CommandSigns.get().activeSigns )
 		{
-			text = this.plugin.activeSigns.get( this.location );
+			text = CommandSigns.get().activeSigns.get( this.location );
 		}
 		if ( text == null )
 		{
-			this.plugin.messenger.sendMessage( this.player, "failure.not_a_sign" );
+			CommandSigns.get().messenger.sendMessage( this.player, "failure.not_a_sign" );
 			return;
 		}
 		int i = 1;
 		for ( final String line : text )
 		{
 			if ( !line.equals( "" ) )
-				this.plugin.messenger.sendRaw( this.player, "success.line_print", new String[] { "NUMBER", "LINE" }, new String[] { "" + i,
-						line } );
+				CommandSigns.get().messenger.sendRaw( this.player, "success.line_print", new String[] { "NUMBER", "LINE" }, new String[] {
+						"" + i, line } );
 			i++;
 		}
 		if ( !batch )
-			this.plugin.playerStates.remove( this.player );
+			CommandSigns.get().playerStates.remove( this.player );
 	}
 
 
 
 
 	public void redstoneToggle( final boolean batch ) {
-		synchronized ( this.plugin.activeSigns )
+		synchronized ( CommandSigns.get().activeSigns )
 		{
-			if ( !this.plugin.activeSigns.containsKey( this.location ) )
+			if ( !CommandSigns.get().activeSigns.containsKey( this.location ) )
 			{
-				this.plugin.messenger.sendMessage( this.player, "failure.not_a_sign" );
+				CommandSigns.get().messenger.sendMessage( this.player, "failure.not_a_sign" );
 				return;
 			}
-			final SignText text = this.plugin.activeSigns.get( this.location );
-			this.plugin.activeSigns.remove( this.location );
+			final SignText text = CommandSigns.get().activeSigns.get( this.location );
+			CommandSigns.get().activeSigns.remove( this.location );
 
 			final boolean enabled = text.isRedstone();
 			if ( enabled )
 			{
 				text.setRedstone( false );
-				this.plugin.activeSigns.put( this.location, text );
-				this.plugin.messenger.sendMessage( this.player, "success.redstone_disabled" );
+				CommandSigns.get().activeSigns.put( this.location, text );
+				CommandSigns.get().messenger.sendMessage( this.player, "success.redstone_disabled" );
 			}
 			else
 			{
 				text.setRedstone( true );
-				this.plugin.activeSigns.put( this.location, text );
-				this.plugin.messenger.sendMessage( this.player, "success.redstone_enabled" );
+				CommandSigns.get().activeSigns.put( this.location, text );
+				CommandSigns.get().messenger.sendMessage( this.player, "success.redstone_enabled" );
 			}
 			if ( !batch )
-				this.plugin.playerStates.remove( this.player );
+				CommandSigns.get().playerStates.remove( this.player );
 		}
 	}
 
@@ -256,54 +254,54 @@ public class ClickHandler
 
 
 	public void removeSign( final boolean batch ) {
-		synchronized ( this.plugin.activeSigns )
+		synchronized ( CommandSigns.get().activeSigns )
 		{
-			if ( !this.plugin.activeSigns.containsKey( this.location ) )
+			if ( !CommandSigns.get().activeSigns.containsKey( this.location ) )
 			{
-				this.plugin.messenger.sendMessage( this.player, "failure.not_a_sign" );
+				CommandSigns.get().messenger.sendMessage( this.player, "failure.not_a_sign" );
 				return;
 			}
-			this.plugin.activeSigns.remove( this.location );
-			this.plugin.messenger.sendMessage( this.player, "success.removed" );
+			CommandSigns.get().activeSigns.remove( this.location );
+			CommandSigns.get().messenger.sendMessage( this.player, "success.removed" );
 		}
 		if ( !batch )
-			if ( this.plugin.playerText.containsKey( this.player ) )
+			if ( CommandSigns.get().playerText.containsKey( this.player ) )
 			{
-				this.plugin.playerStates.put( this.player, PlayerState.ENABLE );
-				this.plugin.messenger.sendMessage( this.player, "information.text_in_clipboard" );
+				CommandSigns.get().playerStates.put( this.player, PlayerState.ENABLE );
+				CommandSigns.get().messenger.sendMessage( this.player, "information.text_in_clipboard" );
 			}
 			else
-				this.plugin.playerStates.remove( this.player );
+				CommandSigns.get().playerStates.remove( this.player );
 	}
 
 
 
 
 	public void toggleSign( final boolean batch ) {
-		synchronized ( this.plugin.activeSigns )
+		synchronized ( CommandSigns.get().activeSigns )
 		{
-			if ( !this.plugin.activeSigns.containsKey( this.location ) )
+			if ( !CommandSigns.get().activeSigns.containsKey( this.location ) )
 			{
-				this.plugin.messenger.sendMessage( this.player, "failure.not_a_sign" );
+				CommandSigns.get().messenger.sendMessage( this.player, "failure.not_a_sign" );
 				return;
 			}
-			final SignText text = this.plugin.activeSigns.get( this.location );
-			this.plugin.activeSigns.remove( this.location );
+			final SignText text = CommandSigns.get().activeSigns.get( this.location );
+			CommandSigns.get().activeSigns.remove( this.location );
 			final boolean enabled = text.isEnabled();
 			if ( enabled )
 			{
 				text.setEnabled( false );
-				this.plugin.activeSigns.put( this.location, text );
-				this.plugin.messenger.sendMessage( this.player, "success.disabled" );
+				CommandSigns.get().activeSigns.put( this.location, text );
+				CommandSigns.get().messenger.sendMessage( this.player, "success.disabled" );
 			}
 			else
 			{
 				text.setEnabled( true );
-				this.plugin.activeSigns.put( this.location, text );
-				this.plugin.messenger.sendMessage( this.player, "success.enabled" );
+				CommandSigns.get().activeSigns.put( this.location, text );
+				CommandSigns.get().messenger.sendMessage( this.player, "success.enabled" );
 			}
 			if ( !batch )
-				this.plugin.playerStates.remove( this.player );
+				CommandSigns.get().playerStates.remove( this.player );
 		}
 	}
 }

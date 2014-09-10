@@ -24,7 +24,6 @@ public class CommandHandler extends Handler
 			boolean op = false;
 			PermissionAttachment grant = null;
 			final Player player = e.getPlayer();
-			this.plugin = e.getPlugin();
 			if ( command.startsWith( "/" ) )
 			{
 				command = command.substring( 1 );
@@ -36,58 +35,58 @@ public class CommandHandler extends Handler
 						if ( command.startsWith( "*" ) )
 						{
 							command = command.substring( 1 );
-							if ( this.plugin.hasPermission( player, "commandsigns.use.super", false ) )
+							if ( CommandSigns.get().hasPermission( player, "commandsigns.use.super", false ) )
 							{
 								// Give player access to the '*' permission node
 								// temporarily
 								if ( player.hasPermission( "*" ) )
-									grant = player.addAttachment( this.plugin, "*", true );
-								this.run( this.plugin, player, command, silent );
+									grant = player.addAttachment( CommandSigns.get(), "*", true );
+								this.run( CommandSigns.get(), player, command, silent );
 							}
 							else
 							{
 								if ( !silent )
-									this.plugin.messenger.sendMessage( player, "cannot_use" );
+									CommandSigns.get().messenger.sendMessage( player, "cannot_use" );
 								return;
 							}
 						}
 						else if ( command.startsWith( "^" ) )
 						{
 							command = command.substring( 1 );
-							if ( this.plugin.hasPermission( player, "commandsigns.use.super", false ) )
+							if ( CommandSigns.get().hasPermission( player, "commandsigns.use.super", false ) )
 							{
 								if ( !player.isOp() )
 								{
 									op = true;
 									player.setOp( true );
 								}
-								this.run( this.plugin, player, command, silent );
+								this.run( CommandSigns.get(), player, command, silent );
 							}
 							else
 							{
 								if ( !silent )
-									this.plugin.messenger.sendMessage( player, "cannot_use" );
+									CommandSigns.get().messenger.sendMessage( player, "cannot_use" );
 								return;
 							}
 						}
 						else if ( command.startsWith( "#" ) )
 						{
 							command = command.substring( 1 );
-							if ( this.plugin.hasPermission( player, "commandsigns.use.super", false ) )
+							if ( CommandSigns.get().hasPermission( player, "commandsigns.use.super", false ) )
 							{
-								final ConsoleCommandSender ccs = this.plugin.getServer().getConsoleSender();
+								final ConsoleCommandSender ccs = CommandSigns.get().getServer().getConsoleSender();
 								final CommandSender cs = new CommandSenderProxy( ccs, player, silent );
-								this.plugin.getServer().dispatchCommand( cs, command );
+								CommandSigns.get().getServer().dispatchCommand( cs, command );
 							}
 							else
 							{
 								if ( !silent )
-									this.plugin.messenger.sendMessage( player, "cannot_use" );
+									CommandSigns.get().messenger.sendMessage( player, "cannot_use" );
 								return;
 							}
 						}
 						else
-							this.run( this.plugin, player, command, silent );
+							this.run( CommandSigns.get(), player, command, silent );
 					}
 					finally
 					{
@@ -100,9 +99,9 @@ public class CommandHandler extends Handler
 				{
 					if ( command.startsWith( "*" ) || command.startsWith( "^" ) || command.startsWith( "#" ) )
 						command = command.substring( 1 );
-					final ConsoleCommandSender ccs = this.plugin.getServer().getConsoleSender();
+					final ConsoleCommandSender ccs = CommandSigns.get().getServer().getConsoleSender();
 					final CommandSender cs = new CommandSenderProxy( ccs, silent );
-					this.plugin.getServer().dispatchCommand( cs, command );
+					CommandSigns.get().getServer().dispatchCommand( cs, command );
 				}
 			}
 		}

@@ -44,7 +44,6 @@ public class SignExecutor
 	private final Location			location;
 
 	private final Player			player;
-	private final CommandSigns		plugin;
 	private final Stack<Boolean>	restrictions	= new Stack<Boolean>();
 
 	private final SignText			text;
@@ -82,15 +81,14 @@ public class SignExecutor
 
 
 
-	public SignExecutor(final CommandSigns plugin, final Player player, final Location location, final Action action) {
-		this.plugin = plugin;
+	public SignExecutor(final Player player, final Location location, final Action action) {
 		this.player = player;
 		this.action = action;
 		this.location = location;
-		this.text = plugin.activeSigns.get( location );
+		this.text = CommandSigns.get().activeSigns.get( location );
 		if ( this.text != null && this.text.isEnabled() )
 		{
-			if ( player == null || plugin.hasPermission( player, "commandsigns.use.regular" ) )
+			if ( player == null || player.hasPermission( "commandsigns.use.regular" ) )
 				this.lines = this.parseCommandSign( player, location );
 			else
 				this.lines = new LinkedList<String>();
@@ -130,7 +128,7 @@ public class SignExecutor
 
 
 	public CommandSigns getPlugin() {
-		return this.plugin;
+		return CommandSigns.get();
 	}
 
 
@@ -214,7 +212,7 @@ public class SignExecutor
 
 		}
 		if ( this.wait != 0 )
-			this.plugin.getServer().getScheduler().scheduleSyncDelayedTask( this.plugin, new Runnable() {
+			CommandSigns.get().getServer().getScheduler().scheduleSyncDelayedTask( CommandSigns.get(), new Runnable() {
 
 
 				@Override
@@ -238,7 +236,7 @@ public class SignExecutor
 
 	private LinkedList<String> parseCommandSign( final Player player, final Location loc ) {
 		final LinkedList<String> commandList = new LinkedList<String>();
-		final SignText commandSign = this.plugin.activeSigns.get( this.location );
+		final SignText commandSign = CommandSigns.get().activeSigns.get( this.location );
 		for ( String line : commandSign )
 		{
 			line = line.replaceAll( "(?iu)<blockx>", "" + loc.getX() );
@@ -258,7 +256,7 @@ public class SignExecutor
 			}
 			while ( line.toLowerCase().contains( "<randomname>" ) )
 			{
-				final Player[] randoms = this.plugin.getServer().getOnlinePlayers();
+				final Player[] randoms = CommandSigns.get().getServer().getOnlinePlayers();
 				final int rand = (int) Math.round( Math.random() * ( randoms.length - 1 ) );
 				line = line.replaceFirst( "(?iu)<randomname>", randoms[rand].getName() );
 			}

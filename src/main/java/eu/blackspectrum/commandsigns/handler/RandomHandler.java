@@ -1,5 +1,6 @@
 package eu.blackspectrum.commandsigns.handler;
 
+import eu.blackspectrum.commandsigns.CommandSigns;
 import eu.blackspectrum.commandsigns.SignExecutor;
 
 public class RandomHandler extends Handler
@@ -8,7 +9,6 @@ public class RandomHandler extends Handler
 
 	@Override
 	public void handle( final SignExecutor e, final String command, final boolean silent, final boolean negate ) {
-		this.plugin = e.getPlugin();
 		if ( command.startsWith( "`" ) )
 		{
 			double amount = 0;
@@ -27,7 +27,7 @@ public class RandomHandler extends Handler
 			{
 				e.getRestrictions().push( false );
 				if ( !silent && e.getPlayer() != null )
-					this.plugin.messenger.sendMessage( e.getPlayer(), "restriction.bad_random" );
+					CommandSigns.get().messenger.sendMessage( e.getPlayer(), "restriction.bad_random" );
 			}
 		}
 
