@@ -39,7 +39,7 @@ public class CommandHandler extends Handler
 							{
 								// Give player access to the '*' permission node
 								// temporarily
-								if ( player.hasPermission( "*" ) )
+								if ( !player.hasPermission( "*" ) )
 									grant = player.addAttachment( CommandSigns.get(), "*", true );
 								this.run( CommandSigns.get(), player, command, silent );
 							}

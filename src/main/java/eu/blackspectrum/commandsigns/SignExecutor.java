@@ -88,7 +88,7 @@ public class SignExecutor
 		this.text = CommandSigns.get().activeSigns.get( location );
 		if ( this.text != null && this.text.isEnabled() )
 		{
-			if ( player == null || player.hasPermission( "commandsigns.use.regular" ) )
+			if ( player == null || CommandSigns.get().hasPermission( player, "commandsigns.use.regular" ) )
 				this.lines = this.parseCommandSign( player, location );
 			else
 				this.lines = new LinkedList<String>();
